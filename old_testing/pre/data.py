@@ -1,7 +1,7 @@
 import numpy as np
 import csv
 
-with open('./data/recipes.csv', 'r', encoding='utf-8') as f:
+with open('.../data/recipes.csv', 'r', encoding='utf-8') as f:
     reader = csv.reader(f)
     next(reader) 
     data = np.array(list(reader), dtype=str)

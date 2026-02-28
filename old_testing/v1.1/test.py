@@ -4,8 +4,11 @@ import umap
 import plotly.express as px
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+
+
 # 5000 rows of data for testing
-df = pd.read_csv("../data/RAW_recipes.csv") 
+print("Reading data...")
+df = pd.read_csv('../RAW_recipes.csv') 
 df = df.head(5000).copy()
 
 # ast.literal_eval is a built-in Python library that safely evaluates strings containing Python expressions
