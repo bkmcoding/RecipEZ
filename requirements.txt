@@ -1,0 +1,8 @@
+# PIP dependencies for RecipeEZ
+scikit-learn
+umap-learn
+numpy
+
+# Optionals / Old Dependencies
+pandas
+plotly

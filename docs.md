@@ -1,5 +1,8 @@
 # RecipEZ Documentation
 
+A simple recipe search engine that takes an input of ingredients
+and spews out instructions and recipes.
+
 ## Table of Contents
 - [The Issue](#the-issue)
 - [Brainstorm and Research](#brainstorm-and-research)
@@ -42,6 +45,8 @@ I would sort of need to do this as if I wanted to visualize the recipes in a 2D 
 
 ### Additional Components:
 - **Cosine Similarity**: This metric is used to measure the similarity between recipes based on their vectorized features. It helps in identifying how closely related two recipes are, which can be useful for recommendation systems.
+- **Tag Ontology**: What I mean when I say Tag Ontology is that I have a set of tags that are associated with each recipe (e.g., "vegan", "gluten-free", "dessert") and I basically used these tags to color code and assign certain colors to each of these recipes. This allows for a more beautiful visualization within our 3D space.
+- **Single Value Decomposition (SVD)**: This technique is used to further reduce the dimensionality of the data and to identify latent features during the visualization process only. This improves accuracy and performance when visualizing the data in a 3D space, as it helps to capture the most important features of the recipes while discarding noise and less relevant information. THIS DOES NOT AFFECT K-NN SEARCHING OR ACCURACY IN OUR PIPELINE.
 
 ### Visualization:
 - **Plotly Express**: This library is used to create interactive visualizations of the clustered recipes. It allows for an intuitive exploration of the recipe clusters and their relationships.
@@ -51,4 +56,12 @@ I would sort of need to do this as if I wanted to visualize the recipes in a 2D 
 1 **Data loading and parsing**: A major issue during the initial stages of the project was getting the data into a usable state. The issue
 I eventually found was that most of these data sets use majorly inconsistent formats such as 3/4 cups, "chopping onions", "chopped onions", "onions, chopped", etc. This is a major discrepancy due to the fact that I need to treat ingredients as seperate features even though semantically they are equivalent.
 
-1. 1 **Attempts**: I made many attempts at manually cleaning the data myself. Firstly, 
+1. 1 **Attempts**: I made many attempts at manually cleaning the data myself. Firstly,
+
+
+## Logs
+**v1.1**: Initial data loading and parsing, basic TF-IDF vectorization, and UMAP visualization.
+
+**v1.2**: Added color tagging based on recipe tags
+
+**v1.3**: Experienced with researching tags and how often each showed up. Also tested out Cosine Similarity for searching.
