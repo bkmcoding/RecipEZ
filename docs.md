@@ -43,6 +43,24 @@ I would sort of need to do this as if I wanted to visualize the recipes in a 2D 
 
 3. **K-NN Clustering**: This step groups similar recipes together based on their vectorized features. The K-NN (K-Nearest Neighbors) algorithm is used to identify clusters of recipes that share similar ingredients and instructions, allowing for better organization and retrieval of recipes.
 
+```mermaid
+sequenceDiagram
+    actor User as Hungry User
+    participant UI as RecipeEZ Interface
+    participant Engine as Search Engine (Python)
+    participant Model as TF-IDF / K-NN
+    participant DB as Vector Index
+
+    User->>UI: Enters ["Chicken", "Garlic", "Pasta"]
+    UI->>Engine: Sends search request
+    Engine->>Model: Vectorize input query
+    Model-->>Engine: Returns query vector
+    Engine->>DB: Execute K-NN search
+    DB-->>Engine: Returns Top 5 nearest recipes
+    Engine->>UI: Formats clean JSON data
+    UI->>User: Displays recipe
+```
+
 ### Additional Components:
 - **Cosine Similarity**: This metric is used to measure the similarity between recipes based on their vectorized features. It helps in identifying how closely related two recipes are, which can be useful for recommendation systems.
 - **Tag Ontology**: What I mean when I say Tag Ontology is that I have a set of tags that are associated with each recipe (e.g., "vegan", "gluten-free", "dessert") and I basically used these tags to color code and assign certain colors to each of these recipes. This allows for a more beautiful visualization within our 3D space.
@@ -55,8 +73,15 @@ I would sort of need to do this as if I wanted to visualize the recipes in a 2D 
 
 1 **Data loading and parsing**: A major issue during the initial stages of the project was getting the data into a usable state. The issue
 I eventually found was that most of these data sets use majorly inconsistent formats such as 3/4 cups, "chopping onions", "chopped onions", "onions, chopped", etc. This is a major discrepancy due to the fact that I need to treat ingredients as seperate features even though semantically they are equivalent.
+1. **Attempts**: I made many attempts at manually cleaning the data myself. Firstly, the initial data set I planned on using was not normalized. What this means is that the ingredients were not in a consistent format. For example, measurements and certain actions would be included in the ingredient list making it significantly more difficult to parse data and vectorize the features in a manner that would give good results. As I said attempts were made but I would have had to struggle with likely some form of LLM to clean the data or making an entirely separate model just for cleaning data. 
+1. **Solution**: This lead me to a separate data set that was already normalized and cleaned which made it significantly easier to parse the data and vectorize the features.
 
-1. 1 **Attempts**: I made many attempts at manually cleaning the data myself. Firstly,
+2 **Visual Tagging**: Another issue I faced was how to visually discern clusters within the space in a clean and intuitive way. As you may know converting words into vectors in 3D space is not intuitive at all, ultimately provides no meaning other than dots in space, and forces the user to interpret based off assumption of ingredients. This is not ideal and ruins the entire purpose of having a visual space for our application. Luckily, the dataset I chose had a set of tags associated with each recipe (e.g., "vegan", "gluten-free", "dessert") and I basically used these tags to color code and assign certain colors to each of these recipes. 
+1. **Additional Iterations**: Numerous attempts at different color associations lead me to a form of 'oncology' color scheme where I provide meaning to certain tags and related tags to that meaning would be a similar color ~ (Note this has some subjective aspect to it as color in itself is an interpreted process and culturally associated with meaning). For example, plant based tags ("vegan", "vegetarian", "salads") would be associated with green colors, while soups and stews would be more a brown/beige color. This allowed clusters to be significantly more visually appealing to explore for the user and also provided a more intuitive way to explore the space.
+
+3 **Front-End Visualization**: This was my biggest pain point. I have no experience using any of 3D graphics and especially not in a web environment. My clear choice for use is ThreeJS as it has extensive documentation and is the modern standard for web-based 3D graphics for web applications. However, It has a moderately decent learning curve and the importance of this aspect was the entire reason I wanted a "galaxy" theme for the project.
+
+4 **Accuracy Testing**: I have no idea how to test the accuracy of my model. I have no idea how to test the accuracy of my K-NN searching or the accuracy of my clusters. This is a major issue as I have no way of knowing if my model is actually providing good results or if its just spitting out random recipes.
 
 
 ## Logs
@@ -65,3 +90,5 @@ I eventually found was that most of these data sets use majorly inconsistent for
 **v1.2**: Added color tagging based on recipe tags
 
 **v1.3**: Experienced with researching tags and how often each showed up. Also tested out Cosine Similarity for searching.
+
+**v1.4**: Added Web Visualization with ThreeJS, No colors are available yet but clicking recipes will show data about recipe.

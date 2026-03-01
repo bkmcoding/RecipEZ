@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Galaxy Explorer</title>
+
+    <script src="https://unpkg.com/three"></script>
+    <script src="https://unpkg.com/3d-force-graph"></script>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #020204;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #info-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            max-height: 80vh;
+            background: rgba(10, 10, 15, 0.85);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            color: white;
+            display: none;
+            overflow-y: auto;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        #close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        #close-btn:hover {
+            color: #fff;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 1.4rem;
+            color: #fff;
+            line-height: 1.2;
+            text-transform: capitalize;
+        }
+
+        .cluster-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #000;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            color: #aaa;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+
+        .data-list {
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loading">GENERATING GALAXY...</div>
+    <div id="3d-graph"></div>
+
+    <div id="info-panel">
+        <button id="close-btn" onclick="closePanel()">✖</button>
+        <div id="badge" class="cluster-badge">Cluster</div>
+        <h1 id="recipe-name">Recipe Name</h1>
+
+        <h3>Ingredients</h3>
+        <ul id="ingredients-list" class="data-list"></ul>
+
+        <h3>Instructions</h3>
+        <ol id="steps-list" class="data-list"></ol>
+    </div>
+
+    <script>
+        fetch('galaxy_data.json')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+
+                const graphData = data.map(node => ({
+                    ...node,
+                    fx: node.x * 200,
+                    fy: node.y * 200,
+                    fz: node.z * 200
+                }));
+
+                const Graph = ForceGraph3D()(document.getElementById('3d-graph'))
+                    .graphData({ nodes: graphData, links: [] })
+                    .nodeColor(node => node.star_color || '#ffffff')
+                    .nodeLabel(node => `<div style="background:rgba(0,0,0,0.8); padding:5px; border-radius:4px;">${node.name.toUpperCase()}</div>`)
+                    .nodeRelSize(0.8)
+                    .nodeResolution(8)
+                    .enableNodeDrag(false)
+                    .onNodeClick(node => {
+                        const distance = 150;
+                        const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+                        Graph.cameraPosition(
+                            { x: node.fx * distRatio, y: node.fy * distRatio, z: node.fz * distRatio },
+                            node, 2000
+                        );
+                        showRecipeDetails(node);
+                    });
+
+                // Kill physics to save GPU
+                Graph.d3Force('charge', null);
+                Graph.d3Force('link', null);
+                Graph.d3Force('center', null);
+
+
+                Graph.camera().far = 50000;
+                Graph.camera().updateProjectionMatrix();
+
+                const scene = Graph.scene();
+
+                const boundaryGeo = new THREE.SphereGeometry(1800, 32, 32);
+                const boundaryMat = new THREE.MeshBasicMaterial({
+                    color: 0x335577,
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.15,
+                    side: THREE.BackSide
+                });
+                scene.add(new THREE.Mesh(boundaryGeo, boundaryMat));
+
+                const starGeo = new THREE.BufferGeometry();
+                const starMat = new THREE.PointsMaterial({
+                    color: 0xffffff,
+                    size: 2.0,
+                    sizeAttenuation: false
+                });
+
+                const starVertices = [];
+                for (let i = 0; i < 12000; i++) {
+                    const u = Math.random();
+                    const v = Math.random();
+                    const theta = u * 2.0 * Math.PI;
+                    const phi = Math.acos(2.0 * v - 1.0);
+                    const radius = 1800;
+
+                    const x = radius * Math.sin(phi) * Math.cos(theta);
+                    const y = radius * Math.sin(phi) * Math.sin(theta);
+                    const z = radius * Math.cos(phi);
+
+                    starVertices.push(x, y, z);
+                }
+
+                const dustGeo = new THREE.BufferGeometry();
+                const dustMat = new THREE.PointsMaterial({
+                    color: 0x2a1b4d, 
+                    size: 800,       
+                    transparent: true,
+                    opacity: 0.04,
+                    map: createDustTexture(),
+                    depthWrite: false,
+                    blending: THREE.AdditiveBlending
+                });
+
+                const dustVertices = [];
+                for (let i = 0; i < 400; i++) {
+                    const x = (Math.random() - 0.5) * 6000;
+                    const y = (Math.random() - 0.5) * 6000;
+                    const z = (Math.random() - 0.5) * 6000;
+                    dustVertices.push(x, y, z);
+                }
+
+                dustGeo.setAttribute('position', new THREE.Float32BufferAttribute(dustVertices, 3));
+                scene.add(new THREE.Points(dustGeo, dustMat));
+
+                starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+                scene.add(new THREE.Points(starGeo, starMat));
+
+                setTimeout(() => {
+                    Graph.cameraPosition(
+                        { x: 0, y: 1500, z: 3500 }, // Start very high and far back
+                        { x: 0, y: 0, z: 0 },       // Look at center
+                        4000                        // 4 second cinematic sweep
+                    );
+                }, 100);
+            });
+
+        function createDustTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+            gradient.addColorStop(0, 'rgba(255,255,255,1)');
+            gradient.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 64, 64);
+            return new THREE.CanvasTexture(canvas);
+        }   
+
+        function safeParse(data) {
+            if (!data) return ["Data unavailable"];
+            if (Array.isArray(data)) return data; 
+
+            try {
+                let parsed = data.replace(/'/g, '"');
+                return JSON.parse(parsed);
+            } catch (e) {
+                const matches = data.match(/'([^']+)'|"([^"]+)"/g);
+                return matches ? matches.map(m => m.replace(/^['"]|['"]$/g, '')) : ["Parsing error"];
+            }
+        }
+
+        function showRecipeDetails(node) {
+            const panel = document.getElementById('info-panel');
+            panel.style.display = 'block';
+
+            document.getElementById('recipe-name').innerText = node.name;
+
+            const badge = document.getElementById('badge');
+            badge.innerText = node.galaxy_cluster || "UNKNOWN";
+            badge.style.backgroundColor = node.star_color || "#888";
+
+            const ingList = document.getElementById('ingredients-list');
+            ingList.innerHTML = '';
+            safeParse(node.ingredients).forEach(ing => {
+                let li = document.createElement('li');
+                li.innerText = ing.charAt(0).toUpperCase() + ing.slice(1);
+                ingList.appendChild(li);
+            });
+
+            const stepsList = document.getElementById('steps-list');
+            stepsList.innerHTML = '';
+            safeParse(node.steps).forEach(step => {
+                let li = document.createElement('li');
+                li.innerText = step.charAt(0).toUpperCase() + step.slice(1);
+                stepsList.appendChild(li);
+            });
+        }
+
+        function closePanel() {
+            document.getElementById('info-panel').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
