@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecipEZ</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="style4-5.css">
+</head>
+
+<body>
+    <div id="loading">Loading Recipes...</div>
+    <div id="search-trigger" onclick="openSearch()">
+        Search ingredients (e.g., chicken, garlic)...
+    </div>
+    <div id="filter-container">
+        <div id="custom-dropdown">
+            <div id="dropdown-header" onclick="toggleDropdown()">VIEW ALL SECTORS</div>
+            <div id="dropdown-list">
+                </div>
+        </div>
+    </div>
+
+    <div id="search-overlay" onclick="closeSearchOnBg(event)">
+        <div id="search-modal">
+            <h2>WARP TERMINAL</h2>
+            
+            <div class="search-toggle-container">
+                <button id="toggle-recipe" class="search-toggle-btn active" onclick="setSearchMode('recipe')">RECIPE NAME (LEXICAL)</button>
+                <button id="toggle-ingredient" class="search-toggle-btn" onclick="setSearchMode('ingredient')">INGREDIENTS (KNN)</button>
+            </div>
+
+            <input type="text" id="search-input" placeholder="Enter recipe name..." onkeypress="handleSearchKey(event)">
+            <button id="search-submit" onclick="executeSearch()">INITIATE WARP</button>
+            
+            <ul id="search-results" style="list-style: none; padding: 0; max-height: 250px; overflow-y: auto; text-align: left; margin-top: 20px;"></ul>
+        </div>
+    </div>
+    <div id="info-panel">
+        <button id="close-btn" onclick="closePanel()">✖</button>
+        <div id="badge" class="cluster-badge">Cluster</div>
+        <h1 id="recipe-name">Recipe Name</h1>
+        <h3>Ingredients</h3>
+        <ul id="ingredients-list" class="data-list"></ul>
+        <h3>Instructions</h3>
+        <ol id="steps-list" class="data-list"></ol>
+    </div>
+
+    <script src="./script4-5.js"></script>
+</body>
+
+</html>

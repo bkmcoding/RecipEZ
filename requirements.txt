@@ -2,7 +2,11 @@
 scikit-learn
 umap-learn
 numpy
+sentence_transformers
+torch
 
 # Optionals / Old Dependencies
-pandas
-plotly
+# pandas
+# plotly
+
+
