@@ -86,7 +86,7 @@ tfidf_matrix = vectorizer.fit_transform(master_features)
 print("Running UMAP projection")
 reducer = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
 
-# UMAP returns a pure Numpy array (Shape: 5000 rows x 3 columns)
+# UMAP returns a pure Numpy array
 embedding_3d = reducer.fit_transform(tfidf_matrix)
 
 print("Exporting JSON")
