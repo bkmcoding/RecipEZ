@@ -1,5 +1,8 @@
 .venv/
+.vscode/
 
-data/
-
-RAW_recipeTest/ 
+data/raw/
+data/processed/
+web/model_data/
+old/legacy/
+.playwright-cli/

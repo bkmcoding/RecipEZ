@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecipEZ</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="loading">Loading Data...</div>
+
+    <header id="top-nav">
+        <div class="nav-left">
+            <span class="brand">RecipEZ</span>
+            <div id="custom-dropdown">
+                <button id="dropdown-header" onclick="toggleDropdown()">Filter: All</button>
+                <div id="dropdown-list"></div>
+            </div>
+        </div>
+        <button id="search-trigger" onclick="openSearch()">Search</button>
+    </header>
+
+    <div id="search-overlay" onclick="closeSearchOnBg(event)">
+        <div id="search-modal">
+            <div class="modal-nav">
+                <button id="toggle-recipe" class="active" onclick="setSearchMode('recipe')">By Name</button>
+                <button id="toggle-ingredient" onclick="setSearchMode('ingredient')">By Ingredient</button>
+            </div>
+            <input type="text" id="search-input" placeholder="Type here..." oninput="handleLiveSearch()"
+                onkeypress="handleSearchKey(event)">
+            <ul id="search-results"></ul>
+            <button id="search-submit" onclick="executeSearch()">Search</button>
+        </div>
+    </div>
+
+    <div id="info-panel">
+        <div class="panel-top">
+            <span id="badge">Category</span>
+            <button onclick="closePanel()">Close</button>
+        </div>
+        <h1 id="recipe-name">Recipe Title</h1>
+
+        <div class="section">
+            <label>Ingredients</label>
+            <ul id="ingredients-list"></ul>
+        </div>
+
+        <div class="section">
+            <label>Instructions</label>
+            <ol id="steps-list"></ol>
+        </div>
+
+        <div class="section">
+            <label>Similar Recipes</label>
+            <ul id="similar-list"></ul>
+        </div>
+    </div>
+
+    <footer id="model-nav">
+        <span class="label">Model:</span>
+        <button id="btn-tfidf" class="active" data-tip="TF-IDF + SVD; best tag agreement" aria-label="Statistical model: TF-IDF plus SVD, best tag agreement" onclick="switchEngine('tfidf')">Statistical</button>
+        <button id="btn-sbert_all" data-tip="SBERT; balanced semantic blend" aria-label="Combined model: SBERT balanced semantic blend" onclick="switchEngine('sbert_all')">Combined</button>
+        <button id="btn-sbert_ingredients" data-tip="SBERT; literal ingredient focus" aria-label="Ingredients model: SBERT literal ingredient focus" onclick="switchEngine('sbert_ingredients')">Ingredients</button>
+        <button id="btn-sbert_names" data-tip="SBERT; title and concept focus" aria-label="Names model: SBERT title and concept focus" onclick="switchEngine('sbert_names')">Names</button>
+    </footer>
+<script src="script.js"></script>
+</body>
+
+</html>

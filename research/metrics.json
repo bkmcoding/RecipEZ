@@ -1,0 +1,486 @@
+{
+  "SBERT Combined": {
+    "recipes": 30000,
+    "cluster_count": 21,
+    "neighbor_count": 5,
+    "neighbor_tag_purity": 0.5406333333333333,
+    "ingredient_jaccard": 0.11823541724252248,
+    "silhouette_3d": -0.13668613135814667,
+    "semantic_to_geometry_overlap": 0.1420797619047619
+  },
+  "SBERT Ingredients": {
+    "recipes": 30000,
+    "cluster_count": 21,
+    "neighbor_count": 5,
+    "neighbor_tag_purity": 0.37042,
+    "ingredient_jaccard": 0.1785134705075931,
+    "silhouette_3d": -0.16177143156528473,
+    "semantic_to_geometry_overlap": 0.10311746031746032
+  },
+  "SBERT Names": {
+    "recipes": 30000,
+    "cluster_count": 21,
+    "neighbor_count": 5,
+    "neighbor_tag_purity": 0.45528,
+    "ingredient_jaccard": 0.09685243035577841,
+    "silhouette_3d": -0.16267915070056915,
+    "semantic_to_geometry_overlap": 0.15325224867724868
+  },
+  "TF-IDF": {
+    "recipes": 30000,
+    "cluster_count": 21,
+    "neighbor_count": 5,
+    "neighbor_tag_purity": 0.5995,
+    "ingredient_jaccard": 0.11425956316195608,
+    "silhouette_3d": -0.11845126003026962,
+    "semantic_to_geometry_overlap": 0.12476309523809524
+  },
+  "pairwise_model_overlap": {
+    "SBERT Combined|SBERT Ingredients": 0.041660846560846565,
+    "SBERT Combined|SBERT Names": 0.2366521164021164,
+    "SBERT Combined|TF-IDF": 0.057789021164021175,
+    "SBERT Ingredients|SBERT Names": 0.01913306878306878,
+    "SBERT Ingredients|TF-IDF": 0.029690343915343916,
+    "SBERT Names|TF-IDF": 0.02875621693121693
+  },
+  "model_distinctiveness": {
+    "SBERT Combined": 0.8879660052910053,
+    "SBERT Ingredients": 0.9698385802469136,
+    "SBERT Names": 0.9051528659611993,
+    "TF-IDF": 0.9612548059964726
+  },
+  "cluster_metrics": {
+    "SBERT Combined": {
+      "Italian Cuisine": {
+        "recipes": 695,
+        "neighbor_tag_purity": 0.3139568345323741,
+        "ingredient_jaccard": 0.10680202152576576
+      },
+      "Vegetarian Sector": {
+        "recipes": 3298,
+        "neighbor_tag_purity": 0.2828380836870831,
+        "ingredient_jaccard": 0.1113784369532617
+      },
+      "Cake Nebula": {
+        "recipes": 323,
+        "neighbor_tag_purity": 0.5956656346749226,
+        "ingredient_jaccard": 0.22127703594221304
+      },
+      "Poultry System": {
+        "recipes": 2306,
+        "neighbor_tag_purity": 0.7006938421509107,
+        "ingredient_jaccard": 0.08433089991270414
+      },
+      "Pork System": {
+        "recipes": 1162,
+        "neighbor_tag_purity": 0.5901893287435456,
+        "ingredient_jaccard": 0.0966875077312189
+      },
+      "Mexican Cuisine": {
+        "recipes": 655,
+        "neighbor_tag_purity": 0.5044274809160305,
+        "ingredient_jaccard": 0.09351833445729432
+      },
+      "Dessert Core": {
+        "recipes": 4712,
+        "neighbor_tag_purity": 0.7960950764006791,
+        "ingredient_jaccard": 0.1678367655108519
+      },
+      "Main Sequence": {
+        "recipes": 6591,
+        "neighbor_tag_purity": 0.4641784251251707,
+        "ingredient_jaccard": 0.12496769701617677
+      },
+      "Brunch Belt": {
+        "recipes": 550,
+        "neighbor_tag_purity": 0.09236363636363637,
+        "ingredient_jaccard": 0.13956055028748052
+      },
+      "Beef System": {
+        "recipes": 1808,
+        "neighbor_tag_purity": 0.6623893805309734,
+        "ingredient_jaccard": 0.10287151356624044
+      },
+      "Seafood System": {
+        "recipes": 1484,
+        "neighbor_tag_purity": 0.7533692722371967,
+        "ingredient_jaccard": 0.08922161015783457
+      },
+      "Vegan Sector": {
+        "recipes": 1261,
+        "neighbor_tag_purity": 0.37287866772402856,
+        "ingredient_jaccard": 0.09815260483726203
+      },
+      "Salad System": {
+        "recipes": 1334,
+        "neighbor_tag_purity": 0.5920539730134933,
+        "ingredient_jaccard": 0.09146941764565489
+      },
+      "Beverage Ocean": {
+        "recipes": 927,
+        "neighbor_tag_purity": 0.6008629989212514,
+        "ingredient_jaccard": 0.10439564707766025
+      },
+      "Asian Cuisine": {
+        "recipes": 1170,
+        "neighbor_tag_purity": 0.49777777777777776,
+        "ingredient_jaccard": 0.08726404187888238
+      },
+      "Soup Sector": {
+        "recipes": 659,
+        "neighbor_tag_purity": 0.5380880121396054,
+        "ingredient_jaccard": 0.0976111849791064
+      },
+      "Breakfast Belt": {
+        "recipes": 816,
+        "neighbor_tag_purity": 0.35661764705882354,
+        "ingredient_jaccard": 0.15088000286867354
+      },
+      "French Cuisine": {
+        "recipes": 157,
+        "neighbor_tag_purity": 0.11210191082802548,
+        "ingredient_jaccard": 0.09411475248157622
+      },
+      "Baking Sector": {
+        "recipes": 20,
+        "neighbor_tag_purity": 0.01,
+        "ingredient_jaccard": 0.14653368984312073
+      },
+      "Stew Cluster": {
+        "recipes": 32,
+        "neighbor_tag_purity": 0.04375,
+        "ingredient_jaccard": 0.07862011864081372
+      },
+      "Indian Cuisine": {
+        "recipes": 40,
+        "neighbor_tag_purity": 0.06,
+        "ingredient_jaccard": 0.09923947369513295
+      }
+    },
+    "SBERT Ingredients": {
+      "Italian Cuisine": {
+        "recipes": 695,
+        "neighbor_tag_purity": 0.11050359712230216,
+        "ingredient_jaccard": 0.14847813179266237
+      },
+      "Vegetarian Sector": {
+        "recipes": 3298,
+        "neighbor_tag_purity": 0.18180715585203153,
+        "ingredient_jaccard": 0.16934321773455144
+      },
+      "Cake Nebula": {
+        "recipes": 323,
+        "neighbor_tag_purity": 0.1386996904024768,
+        "ingredient_jaccard": 0.32572961446562015
+      },
+      "Poultry System": {
+        "recipes": 2306,
+        "neighbor_tag_purity": 0.41639202081526455,
+        "ingredient_jaccard": 0.13185006606746089
+      },
+      "Pork System": {
+        "recipes": 1162,
+        "neighbor_tag_purity": 0.3216867469879518,
+        "ingredient_jaccard": 0.14424002221633073
+      },
+      "Mexican Cuisine": {
+        "recipes": 655,
+        "neighbor_tag_purity": 0.17374045801526716,
+        "ingredient_jaccard": 0.13683870756436164
+      },
+      "Dessert Core": {
+        "recipes": 4712,
+        "neighbor_tag_purity": 0.7098896434634975,
+        "ingredient_jaccard": 0.2629750382201914
+      },
+      "Main Sequence": {
+        "recipes": 6591,
+        "neighbor_tag_purity": 0.35830678197542104,
+        "ingredient_jaccard": 0.18862135077602113
+      },
+      "Brunch Belt": {
+        "recipes": 550,
+        "neighbor_tag_purity": 0.06509090909090909,
+        "ingredient_jaccard": 0.21134346689793893
+      },
+      "Beef System": {
+        "recipes": 1808,
+        "neighbor_tag_purity": 0.5024336283185841,
+        "ingredient_jaccard": 0.13904636935524006
+      },
+      "Seafood System": {
+        "recipes": 1484,
+        "neighbor_tag_purity": 0.39097035040431266,
+        "ingredient_jaccard": 0.13169784130205495
+      },
+      "Vegan Sector": {
+        "recipes": 1261,
+        "neighbor_tag_purity": 0.15114988104678825,
+        "ingredient_jaccard": 0.14864858022739882
+      },
+      "Salad System": {
+        "recipes": 1334,
+        "neighbor_tag_purity": 0.28980509745127436,
+        "ingredient_jaccard": 0.12806730371143327
+      },
+      "Beverage Ocean": {
+        "recipes": 927,
+        "neighbor_tag_purity": 0.5521035598705502,
+        "ingredient_jaccard": 0.1771126071473702
+      },
+      "Asian Cuisine": {
+        "recipes": 1170,
+        "neighbor_tag_purity": 0.31504273504273506,
+        "ingredient_jaccard": 0.13104275635744794
+      },
+      "Soup Sector": {
+        "recipes": 659,
+        "neighbor_tag_purity": 0.16267071320182094,
+        "ingredient_jaccard": 0.14202580652424573
+      },
+      "Breakfast Belt": {
+        "recipes": 816,
+        "neighbor_tag_purity": 0.1730392156862745,
+        "ingredient_jaccard": 0.21568048561986883
+      },
+      "French Cuisine": {
+        "recipes": 157,
+        "neighbor_tag_purity": 0.02929936305732484,
+        "ingredient_jaccard": 0.14137013141048108
+      },
+      "Baking Sector": {
+        "recipes": 20,
+        "neighbor_tag_purity": 0.02,
+        "ingredient_jaccard": 0.17051790367205968
+      },
+      "Stew Cluster": {
+        "recipes": 32,
+        "neighbor_tag_purity": 0.0125,
+        "ingredient_jaccard": 0.12812938510391195
+      },
+      "Indian Cuisine": {
+        "recipes": 40,
+        "neighbor_tag_purity": 0.03,
+        "ingredient_jaccard": 0.1680428983844582
+      }
+    },
+    "SBERT Names": {
+      "Italian Cuisine": {
+        "recipes": 695,
+        "neighbor_tag_purity": 0.18733812949640288,
+        "ingredient_jaccard": 0.08892586189617134
+      },
+      "Vegetarian Sector": {
+        "recipes": 3298,
+        "neighbor_tag_purity": 0.19132807762280168,
+        "ingredient_jaccard": 0.0949850313376828
+      },
+      "Cake Nebula": {
+        "recipes": 323,
+        "neighbor_tag_purity": 0.5560371517027863,
+        "ingredient_jaccard": 0.18785863063518327
+      },
+      "Poultry System": {
+        "recipes": 2306,
+        "neighbor_tag_purity": 0.5941023417172593,
+        "ingredient_jaccard": 0.06961355485212771
+      },
+      "Pork System": {
+        "recipes": 1162,
+        "neighbor_tag_purity": 0.4712564543889845,
+        "ingredient_jaccard": 0.0824464459323538
+      },
+      "Mexican Cuisine": {
+        "recipes": 655,
+        "neighbor_tag_purity": 0.3166412213740458,
+        "ingredient_jaccard": 0.0736212735078998
+      },
+      "Dessert Core": {
+        "recipes": 4712,
+        "neighbor_tag_purity": 0.7366723259762309,
+        "ingredient_jaccard": 0.13685529147920972
+      },
+      "Main Sequence": {
+        "recipes": 6591,
+        "neighbor_tag_purity": 0.43350022758306783,
+        "ingredient_jaccard": 0.10256886220439475
+      },
+      "Brunch Belt": {
+        "recipes": 550,
+        "neighbor_tag_purity": 0.06727272727272728,
+        "ingredient_jaccard": 0.11496484775344185
+      },
+      "Beef System": {
+        "recipes": 1808,
+        "neighbor_tag_purity": 0.48418141592920355,
+        "ingredient_jaccard": 0.08240533140151506
+      },
+      "Seafood System": {
+        "recipes": 1484,
+        "neighbor_tag_purity": 0.6570080862533693,
+        "ingredient_jaccard": 0.0748995324695547
+      },
+      "Vegan Sector": {
+        "recipes": 1261,
+        "neighbor_tag_purity": 0.15432196669310072,
+        "ingredient_jaccard": 0.08073331820048582
+      },
+      "Salad System": {
+        "recipes": 1334,
+        "neighbor_tag_purity": 0.5908545727136432,
+        "ingredient_jaccard": 0.07342458449962415
+      },
+      "Beverage Ocean": {
+        "recipes": 927,
+        "neighbor_tag_purity": 0.46062567421790723,
+        "ingredient_jaccard": 0.06605460656134832
+      },
+      "Asian Cuisine": {
+        "recipes": 1170,
+        "neighbor_tag_purity": 0.33008547008547007,
+        "ingredient_jaccard": 0.06841494234904354
+      },
+      "Soup Sector": {
+        "recipes": 659,
+        "neighbor_tag_purity": 0.49013657056145676,
+        "ingredient_jaccard": 0.08427101841037003
+      },
+      "Breakfast Belt": {
+        "recipes": 816,
+        "neighbor_tag_purity": 0.2948529411764706,
+        "ingredient_jaccard": 0.12794892630000018
+      },
+      "French Cuisine": {
+        "recipes": 157,
+        "neighbor_tag_purity": 0.08025477707006369,
+        "ingredient_jaccard": 0.08122316842231017
+      },
+      "Baking Sector": {
+        "recipes": 20,
+        "neighbor_tag_purity": 0.0,
+        "ingredient_jaccard": 0.11579964287369048
+      },
+      "Stew Cluster": {
+        "recipes": 32,
+        "neighbor_tag_purity": 0.075,
+        "ingredient_jaccard": 0.07377242641131668
+      },
+      "Indian Cuisine": {
+        "recipes": 40,
+        "neighbor_tag_purity": 0.055,
+        "ingredient_jaccard": 0.06530255484821636
+      }
+    },
+    "TF-IDF": {
+      "Italian Cuisine": {
+        "recipes": 695,
+        "neighbor_tag_purity": 0.3530935251798561,
+        "ingredient_jaccard": 0.10035654961942238
+      },
+      "Vegetarian Sector": {
+        "recipes": 3298,
+        "neighbor_tag_purity": 0.26931473620375984,
+        "ingredient_jaccard": 0.10695514125826441
+      },
+      "Cake Nebula": {
+        "recipes": 323,
+        "neighbor_tag_purity": 0.6860681114551084,
+        "ingredient_jaccard": 0.2488380821875895
+      },
+      "Poultry System": {
+        "recipes": 2306,
+        "neighbor_tag_purity": 0.8091066782307025,
+        "ingredient_jaccard": 0.0758633795817084
+      },
+      "Pork System": {
+        "recipes": 1162,
+        "neighbor_tag_purity": 0.7502581755593803,
+        "ingredient_jaccard": 0.08573126070494466
+      },
+      "Mexican Cuisine": {
+        "recipes": 655,
+        "neighbor_tag_purity": 0.3978625954198473,
+        "ingredient_jaccard": 0.08213283715913994
+      },
+      "Dessert Core": {
+        "recipes": 4712,
+        "neighbor_tag_purity": 0.8436757215619695,
+        "ingredient_jaccard": 0.17771055252504972
+      },
+      "Main Sequence": {
+        "recipes": 6591,
+        "neighbor_tag_purity": 0.5926869974207253,
+        "ingredient_jaccard": 0.11987770521661698
+      },
+      "Brunch Belt": {
+        "recipes": 550,
+        "neighbor_tag_purity": 0.11054545454545454,
+        "ingredient_jaccard": 0.13837870333460767
+      },
+      "Beef System": {
+        "recipes": 1808,
+        "neighbor_tag_purity": 0.8105088495575221,
+        "ingredient_jaccard": 0.08503247822905999
+      },
+      "Seafood System": {
+        "recipes": 1484,
+        "neighbor_tag_purity": 0.775067385444744,
+        "ingredient_jaccard": 0.08258240708157429
+      },
+      "Vegan Sector": {
+        "recipes": 1261,
+        "neighbor_tag_purity": 0.3311657414750198,
+        "ingredient_jaccard": 0.09030123706218247
+      },
+      "Salad System": {
+        "recipes": 1334,
+        "neighbor_tag_purity": 0.5400299850074962,
+        "ingredient_jaccard": 0.08576783455000381
+      },
+      "Beverage Ocean": {
+        "recipes": 927,
+        "neighbor_tag_purity": 0.7264293419633225,
+        "ingredient_jaccard": 0.08907472359388678
+      },
+      "Asian Cuisine": {
+        "recipes": 1170,
+        "neighbor_tag_purity": 0.4558974358974359,
+        "ingredient_jaccard": 0.08323485649457936
+      },
+      "Soup Sector": {
+        "recipes": 659,
+        "neighbor_tag_purity": 0.6042488619119879,
+        "ingredient_jaccard": 0.09333976892370059
+      },
+      "Breakfast Belt": {
+        "recipes": 816,
+        "neighbor_tag_purity": 0.39044117647058824,
+        "ingredient_jaccard": 0.15136938670756955
+      },
+      "French Cuisine": {
+        "recipes": 157,
+        "neighbor_tag_purity": 0.05605095541401274,
+        "ingredient_jaccard": 0.08982615398243733
+      },
+      "Baking Sector": {
+        "recipes": 20,
+        "neighbor_tag_purity": 0.01,
+        "ingredient_jaccard": 0.12015445719421684
+      },
+      "Stew Cluster": {
+        "recipes": 32,
+        "neighbor_tag_purity": 0.05625,
+        "ingredient_jaccard": 0.08893843792260545
+      },
+      "Indian Cuisine": {
+        "recipes": 40,
+        "neighbor_tag_purity": 0.025,
+        "ingredient_jaccard": 0.10154792497279465
+      }
+    }
+  },
+  "dataset": {
+    "recipes": 30000,
+    "unique_ingredients": 8436
+  }
+}

@@ -4,6 +4,7 @@ umap-learn
 numpy
 sentence_transformers
 torch
+matplotlib
 
 # Optionals / Old Dependencies
 # pandas
