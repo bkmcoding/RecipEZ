@@ -14,8 +14,10 @@ body {
 :root {
     --top-nav-height: 56px;
     --model-nav-height: 48px;
+    --recipe-bar-height: 64px;
     --top-nav-space: calc(var(--top-nav-height) + env(safe-area-inset-top));
     --model-nav-space: calc(var(--model-nav-height) + env(safe-area-inset-bottom));
+    --recipe-panel-transition: 320ms;
 }
 
 button {
@@ -133,6 +135,10 @@ button.active {
     overflow-y: auto; 
     z-index: 5;
     box-sizing: border-box;
+}
+
+#recipe-bar {
+    display: none;
 }
 
 canvas {
@@ -443,13 +449,83 @@ ol {
 
     #info-panel {
         top: auto;
-        bottom: var(--model-nav-space);
+        bottom: calc(var(--model-nav-space) + var(--recipe-bar-height));
         width: 100%;
-        max-height: min(82dvh, calc(100dvh - var(--top-nav-space) - var(--model-nav-space) - 16px));
+        max-height: calc(100dvh - var(--top-nav-space) - var(--model-nav-space) - var(--recipe-bar-height) - 16px);
         border-left: none;
         border-top: 1px solid #333;
         border-radius: 16px 16px 0 0;
         padding: 20px max(20px, env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+        pointer-events: none;
+        transform: translateY(100%);
+        visibility: hidden;
+        transition:
+            transform var(--recipe-panel-transition) cubic-bezier(0.22, 1, 0.36, 1),
+            visibility var(--recipe-panel-transition);
+    }
+
+    #info-panel.expanded {
+        pointer-events: auto;
+        transform: translateY(0);
+        visibility: visible;
+    }
+
+    #recipe-bar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: var(--model-nav-space);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: var(--recipe-bar-height);
+        padding: 8px max(12px, env(safe-area-inset-right)) 8px max(12px, env(safe-area-inset-left));
+        background: #000;
+        border-top: 1px solid #333;
+        box-sizing: border-box;
+        z-index: 6;
+        pointer-events: none;
+        transform: translateY(100%);
+        visibility: hidden;
+        transition:
+            transform var(--recipe-panel-transition) cubic-bezier(0.22, 1, 0.36, 1),
+            visibility var(--recipe-panel-transition);
+    }
+
+    #recipe-bar.visible {
+        pointer-events: auto;
+        transform: translateY(0);
+        visibility: visible;
+    }
+
+    #recipe-bar-name {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    #recipe-bar button {
+        flex: 0 0 auto;
+        min-width: 72px;
+        min-height: 44px;
+        padding: 8px 10px;
+        font-size: 0.75rem;
+    }
+
+    #recipe-bar button:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        #info-panel,
+        #recipe-bar {
+            transition: none;
+        }
     }
 
     .panel-top {
@@ -459,6 +535,14 @@ ol {
     .panel-top button {
         min-width: 64px;
         min-height: 44px;
+    }
+
+    #badge {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     h1 {

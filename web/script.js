@@ -8,10 +8,13 @@ const RAYCAST_THRESHOLD = 8
 const TOUCH_RAYCAST_THRESHOLD = 14
 const TAP_MAX_DISTANCE = 8
 const TAP_MAX_DURATION = 500
+const RECIPE_PANEL_HIDE_DELAY = 360
 
 let currentFilter = 'ALL'
 let isSearchActive = false
 let activeLabelIndex = -1
+let isRecipePanelExpanded = false
+let recipePanelHideTimeout = null
 
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -429,6 +432,7 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix()
   renderer.setSize(window.innerWidth, window.innerHeight)
   if (nodePoints) nodePoints.material.size = getPointSize()
+  syncRecipePresentation()
 })
 ;(function animate() {
   requestAnimationFrame(animate)
@@ -567,8 +571,24 @@ function safeParse(d) {
 }
 
 function showRecipeDetails(node) {
-  document.getElementById('info-panel').style.display = 'block'
+  const panel = document.getElementById('info-panel')
+  const bar = document.getElementById('recipe-bar')
+
+  clearTimeout(recipePanelHideTimeout)
+  panel.style.display = 'block'
+  document.getElementById('recipe-bar-name').textContent = node.name
   document.getElementById('recipe-name').innerText = node.name
+
+  if (isMobileViewport()) {
+    bar.classList.add('visible')
+    panel.classList.toggle('expanded', isRecipePanelExpanded)
+  } else {
+    isRecipePanelExpanded = false
+    bar.classList.remove('visible')
+    panel.classList.remove('expanded')
+  }
+
+  syncRecipePanelToggle()
 
   const badge = document.getElementById('badge')
   badge.innerText = node.galaxy_cluster || 'UNKNOWN'
@@ -620,10 +640,69 @@ function showRecipeDetails(node) {
   }
 }
 
+function syncRecipePanelToggle() {
+  const toggle = document.getElementById('recipe-bar-toggle')
+  toggle.textContent = isRecipePanelExpanded ? 'Minimize' : 'Expand'
+  toggle.setAttribute('aria-expanded', String(isRecipePanelExpanded))
+}
+
+function toggleRecipePanel() {
+  isRecipePanelExpanded = !isRecipePanelExpanded
+  document.getElementById('info-panel').classList.toggle('expanded', isRecipePanelExpanded)
+  syncRecipePanelToggle()
+}
+
+function syncRecipePresentation() {
+  const panel = document.getElementById('info-panel')
+  const bar = document.getElementById('recipe-bar')
+
+  clearTimeout(recipePanelHideTimeout)
+
+  if (activeLabelIndex === -1) {
+    isRecipePanelExpanded = false
+    panel.classList.remove('expanded')
+    panel.style.display = 'none'
+    bar.classList.remove('visible')
+    syncRecipePanelToggle()
+    return
+  }
+
+  panel.style.display = 'block'
+
+  if (isMobileViewport()) {
+    panel.classList.toggle('expanded', isRecipePanelExpanded)
+    bar.classList.add('visible')
+  } else {
+    isRecipePanelExpanded = false
+    panel.classList.remove('expanded')
+    bar.classList.remove('visible')
+  }
+
+  syncRecipePanelToggle()
+}
+
 function closePanel() {
-  document.getElementById('info-panel').style.display = 'none'
+  const panel = document.getElementById('info-panel')
+  const bar = document.getElementById('recipe-bar')
+
+  if (isMobileViewport()) {
+    isRecipePanelExpanded = false
+    panel.classList.remove('expanded')
+    bar.classList.remove('visible')
+    syncRecipePanelToggle()
+    clearTimeout(recipePanelHideTimeout)
+    recipePanelHideTimeout = setTimeout(() => {
+      panel.style.display = 'none'
+    }, RECIPE_PANEL_HIDE_DELAY)
+  } else {
+    isRecipePanelExpanded = false
+    panel.style.display = 'none'
+    bar.classList.remove('visible')
+    syncRecipePanelToggle()
+  }
+
   if (glowSprite) glowSprite.material.opacity = 0
-  activeLabelIndex = -1;
+  activeLabelIndex = -1
 }
 
 function openSearch() {
