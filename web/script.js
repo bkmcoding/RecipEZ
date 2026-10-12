@@ -1,7 +1,13 @@
 const SCALE = 1000
 const FOG_DENSITY = 0.00025
-const CAM_MAX_DIST = 10000
-const POINT_SIZE = 3
+const CAM_MIN_DIST = 50
+const CAM_MAX_DIST = 12000
+const DESKTOP_POINT_SIZE = 3
+const MOBILE_POINT_SIZE = 5
+const RAYCAST_THRESHOLD = 8
+const TOUCH_RAYCAST_THRESHOLD = 14
+const TAP_MAX_DISTANCE = 8
+const TAP_MAX_DURATION = 500
 
 let currentFilter = 'ALL'
 let isSearchActive = false
@@ -158,7 +164,7 @@ function buildNodes(data) {
   nodePoints = new THREE.Points(
     geo,
     new THREE.PointsMaterial({
-      size: POINT_SIZE,
+      size: getPointSize(),
       sizeAttenuation: true,
       vertexColors: true,
       depthWrite: false,
@@ -197,68 +203,170 @@ applyOrbit()
 
 const velocity = { dx: 0, dy: 0 }
 const DAMPING = 0.88
-let isDragging = false,
-  isPan = false
-let lastX = 0,
-  lastY = 0,
-  dragDist = 0
 let animating = false
 
 renderer.domElement.addEventListener('contextmenu', (e) => e.preventDefault())
 
-renderer.domElement.addEventListener('mousedown', (e) => {
-  if (isSearchActive) return // <--- ADD THIS
-  isDragging = true
-  isPan = e.button === 2 || e.shiftKey
-  lastX = e.clientX
-  lastY = e.clientY
-  dragDist = 0
-  velocity.dx = 0
-  velocity.dy = 0
-})
-
-window.addEventListener('mousemove', (e) => {
-  if (!isDragging) return
-  const dx = e.clientX - lastX
-  const dy = e.clientY - lastY
-  lastX = e.clientX
-  lastY = e.clientY
-  dragDist += Math.abs(dx) + Math.abs(dy)
-  velocity.dx = dx
-  velocity.dy = dy
-  if (!animating) {
-    if (isPan) applyPan(dx, dy)
-    else applyRotate(dx, dy)
-  }
-})
-
-window.addEventListener('mouseup', (e) => {
-  if (e.target.tagName !== 'CANVAS') return
-  const wasDrag = dragDist > 4
-  isDragging = false
-  if (wasDrag) return
-  if (!nodePoints) return
-  const mouse = new THREE.Vector2((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1)
-  const ray = new THREE.Raycaster()
-  ray.params.Points = { threshold: 8 }
-  ray.setFromCamera(mouse, camera)
-
-  const hits = ray.intersectObject(nodePoints)
-  if (hits.length) {
-    const validHit = hits.find((hit) => currentFilter === 'ALL' || nodeData[hit.index].galaxy_cluster === currentFilter)
-    if (validHit) selectNode(validHit.index)
-  }
-})
-
 renderer.domElement.addEventListener(
   'wheel',
   (e) => {
-    camDist *= 1 + e.deltaY * 0.001
-    camDist = Math.max(50, Math.min(12000, camDist))
-    if (!animating) applyOrbit()
+    setCameraDistance(camDist * (1 + e.deltaY * 0.001))
   },
   { passive: true },
 )
+
+const pointers = new Map()
+let gesture = null
+let tapGesture = null
+
+function isMobileViewport() {
+  return window.innerWidth < 768
+}
+
+function getPointSize() {
+  return isMobileViewport() ? MOBILE_POINT_SIZE : DESKTOP_POINT_SIZE
+}
+
+function pointerPosition(event) {
+  return { x: event.clientX, y: event.clientY }
+}
+
+function readGesture() {
+  const positions = [...pointers.values()]
+  const center = positions.reduce(
+    (sum, position) => ({ x: sum.x + position.x, y: sum.y + position.y }),
+    { x: 0, y: 0 },
+  )
+  center.x /= positions.length
+  center.y /= positions.length
+  const distance =
+    positions.length > 1
+      ? Math.hypot(positions[0].x - positions[1].x, positions[0].y - positions[1].y)
+      : 0
+  return { center, distance }
+}
+
+function getDragMode(event) {
+  if (event.pointerType === 'mouse' && (event.button === 2 || event.shiftKey)) return 'pan'
+  return 'rotate'
+}
+
+function markTapMovement(event) {
+  if (!tapGesture || tapGesture.id !== event.pointerId) return
+  const distance = Math.hypot(event.clientX - tapGesture.x, event.clientY - tapGesture.y)
+  if (distance > TAP_MAX_DISTANCE) tapGesture.moved = true
+}
+
+function setCameraDistance(distance) {
+  camDist = Math.max(CAM_MIN_DIST, Math.min(CAM_MAX_DIST, distance))
+  if (!animating) applyOrbit()
+}
+
+function resetPointerInteraction() {
+  pointers.clear()
+  gesture = null
+  tapGesture = null
+  velocity.dx = 0
+  velocity.dy = 0
+}
+
+function startPointer(event) {
+  if (isSearchActive) return
+  renderer.domElement.setPointerCapture(event.pointerId)
+  pointers.set(event.pointerId, pointerPosition(event))
+  velocity.dx = 0
+  velocity.dy = 0
+
+  if (pointers.size === 1) {
+    gesture = { ...readGesture(), mode: getDragMode(event) }
+    tapGesture = {
+      id: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      time: performance.now(),
+      moved: false,
+      multi: false,
+    }
+  } else {
+    if (tapGesture) tapGesture.multi = true
+    gesture = readGesture()
+  }
+}
+
+function movePointer(event) {
+  if (!pointers.has(event.pointerId)) return
+  const previous = gesture
+  pointers.set(event.pointerId, pointerPosition(event))
+  const current = readGesture()
+  markTapMovement(event)
+
+  if (pointers.size === 1 && previous) {
+    const dx = current.center.x - previous.center.x
+    const dy = current.center.y - previous.center.y
+    velocity.dx = dx
+    velocity.dy = dy
+    if (!animating) {
+      if (gesture.mode === 'pan') applyPan(dx, dy)
+      else applyRotate(dx, dy)
+    }
+  } else if (pointers.size === 2 && previous && current.distance > 0) {
+    velocity.dx = 0
+    velocity.dy = 0
+    setCameraDistance(camDist * (previous.distance / current.distance))
+    applyPan(current.center.x - previous.center.x, current.center.y - previous.center.y)
+  }
+
+  gesture = current
+}
+
+function isTap(event) {
+  if (!tapGesture || tapGesture.multi || tapGesture.moved || tapGesture.id !== event.pointerId) return false
+  const distance = Math.hypot(event.clientX - tapGesture.x, event.clientY - tapGesture.y)
+  const duration = performance.now() - tapGesture.time
+  return distance <= TAP_MAX_DISTANCE && (event.pointerType !== 'touch' || duration <= TAP_MAX_DURATION)
+}
+
+function selectNodeAtPointer(event) {
+  if (!nodePoints) return
+  const pointer = new THREE.Vector2(
+    (event.clientX / window.innerWidth) * 2 - 1,
+    -(event.clientY / window.innerHeight) * 2 + 1,
+  )
+  const ray = new THREE.Raycaster()
+  ray.params.Points = {
+    threshold: event.pointerType === 'touch' ? TOUCH_RAYCAST_THRESHOLD : RAYCAST_THRESHOLD,
+  }
+  ray.setFromCamera(pointer, camera)
+
+  const hits = ray.intersectObject(nodePoints)
+  const validHit = hits.find((hit) => currentFilter === 'ALL' || nodeData[hit.index].galaxy_cluster === currentFilter)
+  if (validHit) selectNode(validHit.index)
+}
+
+function endPointer(event) {
+  if (!pointers.has(event.pointerId)) return
+  const shouldSelect = isTap(event)
+  pointers.delete(event.pointerId)
+
+  if (pointers.size === 0) {
+    resetPointerInteraction()
+    if (shouldSelect) selectNodeAtPointer(event)
+  } else {
+    velocity.dx = 0
+    velocity.dy = 0
+    gesture = { ...readGesture(), mode: 'rotate' }
+  }
+}
+
+renderer.domElement.addEventListener('pointerdown', startPointer)
+renderer.domElement.addEventListener('pointermove', movePointer)
+renderer.domElement.addEventListener('pointerup', endPointer)
+renderer.domElement.addEventListener('pointercancel', (event) => {
+  pointers.delete(event.pointerId)
+  if (pointers.size === 0) resetPointerInteraction()
+  else gesture = { ...readGesture(), mode: 'rotate' }
+})
+window.addEventListener('blur', resetPointerInteraction)
 
 function applyRotate(dx, dy) {
   const speed = 0.004
@@ -278,7 +386,7 @@ function applyPan(dx, dy) {
 }
 
 function tickInertia() {
-  if (!isDragging && !animating && (Math.abs(velocity.dx) > 0.01 || Math.abs(velocity.dy) > 0.01)) {
+  if (!animating && (Math.abs(velocity.dx) > 0.01 || Math.abs(velocity.dy) > 0.01)) {
     applyRotate(velocity.dx, velocity.dy)
     velocity.dx *= DAMPING
     velocity.dy *= DAMPING
@@ -320,6 +428,7 @@ window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
   renderer.setSize(window.innerWidth, window.innerHeight)
+  if (nodePoints) nodePoints.material.size = getPointSize()
 })
 ;(function animate() {
   requestAnimationFrame(animate)
