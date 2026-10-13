@@ -29,7 +29,11 @@ renderer.setClearColor(0x000005, 1)
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, CAM_MAX_DIST)
 scene.add(camera)
 
-function makeStarLayer(count, size, opacity) {
+const starLayers = []
+const starInverseQuat = new THREE.Quaternion()
+const starOffset = new THREE.Vector3()
+
+function makeStarLayer(count, size, opacity, parallax) {
   const verts = []
   for (let i = 0; i < count; i++) {
     const theta = Math.random() * Math.PI * 2
@@ -53,9 +57,20 @@ function makeStarLayer(count, size, opacity) {
   )
   pts.renderOrder = -999
   camera.add(pts)
+  starLayers.push({ points: pts, parallax })
 }
-makeStarLayer(18000, 0.8, 0.18)
-makeStarLayer(2500, 1.5, 0.3)
+
+function updateStarLayers() {
+  starInverseQuat.copy(camQuat).invert()
+  starLayers.forEach(({ points, parallax }) => {
+    starOffset.copy(camTarget).multiplyScalar(parallax)
+    points.position.copy(starOffset).applyQuaternion(starInverseQuat)
+    points.quaternion.copy(starInverseQuat)
+  })
+}
+
+makeStarLayer(18000, 0.8, 0.18, 0.02)
+makeStarLayer(2500, 1.5, 0.3, 0.06)
 
 const nebulaColors = [
   { color: new THREE.Color(0.08, 0.04, 0.18), count: 3000, radius: 800, spread: 600 },
@@ -437,6 +452,7 @@ window.addEventListener('resize', () => {
 ;(function animate() {
   requestAnimationFrame(animate)
   tickInertia()
+  updateStarLayers()
   renderer.render(scene, camera)
 })()
 
